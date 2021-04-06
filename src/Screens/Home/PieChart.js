@@ -4,13 +4,12 @@ import {Layout, Text} from '@ui-kitten/components';
 
 export const PieChart = props => {
     const {userLogged } = props;
-    console.log('\x1b[1;34m', 'LOG: userLogged.totalAmount', userLogged.totalAmount);
 
     return(
         <Layout style={[styles.container, styles.center]}>
             <View style={styles.center}>
-                <Text style={{fontSize: 18}}>Available to buy</Text>
-                <Text style={{fontSize: 24}}>$ {parseFloat(userLogged.totalAmount).toFixed()}</Text>
+                <Text style={{fontSize: 18, color: Constant.colors.whiteColor, paddingVertical: 10, fontWeight: 'bold'}}>Available</Text>
+                <Text style={{fontSize: 24, color: Constant.colors.whiteColor}}>$ {parseFloat(userLogged.totalAmount).toFixed()}</Text>
             </View>
         </Layout>
 
@@ -20,10 +19,10 @@ export const PieChart = props => {
 const styles = StyleSheet.create({
     center: {
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
     },
     container: {
-        height: 150,
+        height: 120,
         backgroundColor: Constant.colors.blueColor,
     }
 });

@@ -39,40 +39,49 @@ const HomeStack = ({navigation}) => {
                         <View style={{marginRight: 10}}>
                             <MaterialCommunityIcons
                                 name="logout"
-                                size={24}
-                                // backgroundColor="#fff"
+                                size={30}
                                 color={Constant.colors.whiteColor}
                                 onPress={() => logout()}
                             />
                         </View>
-                    ),
+                    )
                 }}
             />
 
             <Stack.Screen
-                name={'Details'}
+                name={'DETAILS'}
                 component={DetailsScreen}
                 options={{
-                    // headerTitleAlign: 'center',
-                    // headerTitleStyle: {
-                    //     color: '#2e64e5',
-                    //     fontFamily: 'Kufam-SemiBoldItalic',
-                    //     fontSize: 18,
-                    // },
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                        color: Constant.colors.whiteColor,
+                        fontSize: 18,
+                    },
                     headerStyle: {
                         backgroundColor: Constant.colors.blueColor,
+                        elevation: 0
                     },
                     headerRight: () => (
                         <View style={{marginRight: 10}}>
                             <MaterialCommunityIcons
                                 name="logout"
-                                size={22}
-                                backgroundColor="#fff"
-                                color="#2e64e5"
+                                size={30}
+                                color={Constant.colors.whiteColor}
                                 onPress={() => logout()}
                             />
                         </View>
                     ),
+                    headerLeft: () => (
+                        <View style={{marginLeft: 10}}>
+                            <MaterialCommunityIcons
+                                name="arrow-left"
+                                size={30}
+                                color={Constant.colors.whiteColor}
+                                onPress={() => navigation.navigate('HOME')}
+                            />
+                        </View>
+                    ),
+
                 }}
             />
 
@@ -104,15 +113,6 @@ const ProfileStack = ({navigation}) => (
 
 const AppStack = () => {
 
-    // return (
-    //
-    //     <Drawer.Navigator initialRouteName="HomeScreen">
-    //         <Drawer.Screen name="Home" component={HomeScreen} />
-    //         <Drawer.Screen name="History" component={History} />
-    //         <Drawer.Screen name="Profile" component={Profile} />
-    //     </Drawer.Navigator>
-    //
-    // );
 
     return (
         <Tab.Navigator
@@ -141,19 +141,19 @@ const AppStack = () => {
                     ),
                 })}
             />
-            <Tab.Screen
-                name="History"
-                component={HistoryStack}
-                options={({route}) => ({
-                    tabBarIcon: ({color, size}) => (
-                        <MaterialCommunityIcons
-                            name="history"
-                            color={color}
-                            size={size}
-                        />
-                    ),
-                })}
-            />
+            {/*<Tab.Screen*/}
+            {/*    name="History"*/}
+            {/*    component={HistoryStack}*/}
+            {/*    options={({route}) => ({*/}
+            {/*        tabBarIcon: ({color, size}) => (*/}
+            {/*            <MaterialCommunityIcons*/}
+            {/*                name="history"*/}
+            {/*                color={color}*/}
+            {/*                size={size}*/}
+            {/*            />*/}
+            {/*        ),*/}
+            {/*    })}*/}
+            {/*/>*/}
             <Tab.Screen
                 name="Profile"
                 component={ProfileStack}

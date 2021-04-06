@@ -25,23 +25,10 @@ export const HomeScreen = (props) => {
     const [userLogged, setUserLogged] = useState();
     const [openModal, setOpenModal] = useState(false);
 
-
-    // useEffect(() => {
-    //     getInfoCoins();
-    //     getInfoUser();
-    // }, []);
-
     useFocusEffect(
         useCallback(() => {
             getInfoCoins();
             getInfoUser();
-            // return () => {
-            //     setCoinsConsult();
-            //     setUserConsult();
-            //     setListCoins();
-            //     setFetchConsultError();
-            //     setUserLogged();
-            // }
         }, [])
     );
 
@@ -143,19 +130,12 @@ export const HomeScreen = (props) => {
             console.log('e home => ', e)
         }
 
-
-
-        // console.log('\x1b[1;34m', 'LOG: userDetails', userDetails);
-
-
-
     };
 
     if(fetchConsultError) {
         return(
             <Layout style={styles.center}>
 
-                {/*<Text style={styles.textWhite}>HomeScreen {user.uid}</Text>*/}
                 <Button onPress={() => {
                     getInfoCoins();
                     getInfoUser();

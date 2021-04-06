@@ -5,20 +5,23 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
+    ScrollView
 } from 'react-native';
 import {
     Button,
-    Icon,
     Layout,
     ListItem,
     Modal,
     Text,
-    Input
+    Input,
+    Spinner,
+    Card
 } from '@ui-kitten/components';
 import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 import {AuthContext} from '../../Navigation/AuthProvider';
 
@@ -26,6 +29,7 @@ export const DetailsScreen = props => {
     const item = props.route.params;
     const [userHasCoinToSell, setUserHasCoinToSell] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [movementsConsult, setMovementsConsult] = useState(true);
     const [numberOfCoinsToSell, setNumberOfCoinsToSell] = useState(0);
     const [numberOfCoins, setNumberOfCoins] = useState(1);
     const {user} = useContext(AuthContext);
@@ -33,7 +37,6 @@ export const DetailsScreen = props => {
     const [openModal, setOpenModal] = useState(false);
     const [operationType, setOperationType] = useState('');
     const [allDataUser, setAllDataUser] = useState([]);
-    // console.log('item', item.item);
 
 
     useFocusEffect(
@@ -72,7 +75,7 @@ export const DetailsScreen = props => {
                 .where('symbol', '==', item.item.name)
                 .get();
             setListMovements(movements._docs);
-            setLoading(false);
+            setMovementsConsult(false);
         } catch (e) {
             console.log('e history => ', e);
         }
@@ -80,6 +83,9 @@ export const DetailsScreen = props => {
     };
 
     const buyCoins = async () => {
+        setLoading(true);
+        setMovementsConsult(true);
+        setOpenModal(false);
         let price = item.item.price;
         price = price.replace('$ ', '');
         price = price.replace(',', '');
@@ -122,10 +128,6 @@ export const DetailsScreen = props => {
                 userUpdate
                     .update(aux)
                     .then((response) => {
-                        // Toast.show({
-                        //     text1: 'Hello',
-                        //     text2: 'This is some something 👋'
-                        // });
                         const ref = firestore().collection('movements').doc(user.id);
                         let nameCoin = Constant.coins.find(element => element.symbol === item.item.name);
 
@@ -133,9 +135,10 @@ export const DetailsScreen = props => {
                             name: nameCoin.name,
                             symbol: item.item.name,
                             amount: numberOfCoins,
-                            date: new Date(),
+                            date: new Date('DD MMM YYYY hh:mm'),
                             userId: user.uid,
                             operationType,
+                            price,
                             oldBalance: item.userLogged.totalAmount,
                             newBalance: item.userLogged.totalAmount - (numberOfCoins * price)
                         });
@@ -143,8 +146,7 @@ export const DetailsScreen = props => {
                         getInfoMovements();
                     })
                     .catch(error => {
-                        // console.log('error', error);
-
+                        console.log('error', error);
                     });
 
             }catch (e) {
@@ -156,8 +158,10 @@ export const DetailsScreen = props => {
     };
 
     const sellCoins = async () => {
+        setLoading(true);
+        setMovementsConsult(true);
+        setOpenModal(false);
         const coin = userHasCoinToSell[0]._data.coins.find(element => element.symbol === item.item.name);
-        // console.log('\x1b[1;34m', 'LOG: coin', coin);
 
         if(coin.amount < numberOfCoins) {
             Alert.alert('Error', 'No no tienes la cantidad que quieres vender');
@@ -200,7 +204,6 @@ export const DetailsScreen = props => {
                 nameOfCoins,
                 totalAmount: allDataUser._data.totalAmount + (numberOfCoins * price)
             };
-            // console.log('\x1b[1;34m', 'LOG: data', allDataUser._data.totalAmount);
 
             try{
                 const userUpdate = await firestore().collection('users')
@@ -209,9 +212,6 @@ export const DetailsScreen = props => {
                 userUpdate
                     .update(data)
                     .then((response) => {
-                        // console.log('\x1b[1;34m', 'LOG: response', response);
-                        // console.log('userUpdate => ', userUpdate);
-
 
                         const ref = firestore().collection('movements').doc(user.id);
                         let nameCoin = Constant.coins.find(element => element.symbol === item.item.name);
@@ -220,9 +220,10 @@ export const DetailsScreen = props => {
                             name: nameCoin.name,
                             symbol: item.item.name,
                             amount: numberOfCoins,
-                            date: new Date(),
+                            date: new Date('DD MMM YYYY hh:mm'),
                             userId: user.uid,
                             operationType,
+                            price,
                             oldBalance: item.userLogged.totalAmount,
                             newBalance: allDataUser._data.totalAmount + (numberOfCoins * price)
                         });
@@ -237,175 +238,181 @@ export const DetailsScreen = props => {
             }catch (e) {
                 console.log('\x1b[1;34m', 'LOG: e', e);
             }
-
-
-
-
-
         }
+    };
 
+    const renderItem = ({ item }) => {
+        return(
+            <Card
+                status={item._data.operationType === 'buy' ? 'danger' : 'success'}
+                style={styles.card}
+            >
+                <Layout style={styles.propertyOfCard}>
+                    <Text>Operation Type:</Text>
+                    <Text>{item._data.operationType.toUpperCase()}</Text>
+                </Layout>
+
+                <Layout style={styles.propertyOfCard}>
+                    <Text>Amount:</Text>
+                    <Text>{item._data.amount}</Text>
+                </Layout>
+
+                <Layout style={styles.propertyOfCard}>
+                    <Text>Price:</Text>
+                    <Text>{item._data.price}</Text>
+                </Layout>
+
+                <Layout style={styles.propertyOfCard}>
+                    <Text>Date:</Text>
+                    <Text>{moment(item._data.date).format('DD-MM-YYYY h:mm')}</Text>
+                </Layout>
+            </Card>
+        );
 
     };
 
-    const renderItem = ({ item, index }) => {
-        // console.log('\x1b[1;34m', 'LOG: item', item);
-
-        return (
-            <ListItem
-                title={moment(item._data.date).format('DD-MM-YYYY h:mm')}
-                description={item._data.amount}
-            />
-
-        );
-    }
-
     const renderEmptyList = () => (
-        <Layout style={{height: 30, justifyContent: 'center', alignSelf: 'stretch', paddingHorizontal: 10}}>
-            <Text>No hay movimientos</Text>
+        <Layout style={styles.listEmpty}>
+            <Text>No movements to show</Text>
+            <Image
+                style={{width: 250, height: 250}}
+                source={Constant.image.listEmpty}
+            />
         </Layout>
-
     );
 
-    // console.log('listMovements ', numberOfCoinsToSell);
+    const validateSell = () => {
+        if(numberOfCoinsToSell === 0) {
+            Alert.alert('Error!', 'No tienes monedas para vender');
+        } else {
+            setOperationType('sell');
+            setOpenModal(true);
+        }
+    };
 
+    const modalConfirm = () => {
+        Alert.alert(
+            'Alert!!!',
+            `Are you sure you ${operationType === 'buy' ? 'buy' : 'sell'} this amount? ${numberOfCoins}`,
+            [
+                {
+                    text: "Cancel",
+                    // onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => operationType === 'buy' ? buyCoins() : sellCoins()}
+            ]
+        )
+    }
 
     return(
-        <Layout style={{flex: 1, alignSelf: 'stretch'}}>
-            <Layout style={{height: 200, backgroundColor: 'white', alignItems: 'center', paddingTop: 10}}>
-                <Layout style={{backgroundColor: 'white'}}>
-                    <Image
-                        style={{width: 50,
-                            height: 50,}}
-                        source={{
-                            uri: 'https://reactnative.dev/img/tiny_logo.png',
-                        }}
-                    />
-                    <Text style={{color: 'black'}}>{item.item.name}</Text>
-                </Layout>
-
-
-                {/*cantidad de monedas que tengo para vender*/}
-                {
-                    numberOfCoinsToSell > 0 && (
-                        <Text style={{color: 'black'}}>cantidad de moneda que tengo {numberOfCoinsToSell}</Text>
-                    )
-                }
-
-                <Layout style={{flexDirection: 'row', alignItems: 'center', justifyContent:'space-around', alignSelf: 'stretch', backgroundColor: 'white'}}>
-                    <TouchableOpacity
-                        style={{backgroundColor: 'white'}}
-                        onPress={() => {
-                            setOperationType('buy');
-                            setOpenModal(true);
-                            // buyCoins()
-                        }}
-                    >
-                        <Text style={{color: 'black'}}>Comprar</Text>
-                        <MaterialCommunityIcons
-                            name="credit-card-refund-outline"
-                            size={40}
-                            backgroundColor="#fff"
-                            color="#2e64e5"
-                            // onPress={() => logout()}
-                        />
-
-                        {/*<Icon*/}
-                        {/*    raised*/}
-                        {/*    name='heartbeat'*/}
-                        {/*    type='font-awesome'*/}
-                        {/*    color='#f50'*/}
-                        {/*    // onPress={() => console.log('hello')}*/}
-                        {/*/>*/}
-                    </TouchableOpacity>
-
-
-                    {
-                        numberOfCoinsToSell > 0 && (
-                            <TouchableOpacity
-                                style={{backgroundColor: 'white'}}
-                                onPress={() => {
-                                    setOperationType('sell');
-                                    setOpenModal(true);
-                                }}
-                            >
-                                <Text style={{color: 'black'}}>Vender</Text>
-                                <MaterialCommunityIcons
-                                    name="cash-multiple"
-                                    size={40}
-                                    backgroundColor="#fff"
-                                    color="#2e64e5"
-                                    // onPress={() => logout()}
-                                />
-                            </TouchableOpacity>
-                        )
-                    }
-
-                </Layout>
-
-            </Layout>
-            <Layout>
-                <FlatList
-                    data={listMovements}
-                    renderItem={renderItem}
-                    ListEmptyComponent={renderEmptyList}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-
-                <Modal
-                    visible={openModal}
-                    backdropStyle={styles.backdrop}
-                    onBackdropPress={() => setOpenModal(false)}
-                >
-                    <Layout style={{height: 400, width: 300, justifyContent: 'space-between'}}>
-                        <Layout style={{flex: 1}}>
-
-                            <Text>{operationType === 'buy' ? 'Comprar' : 'Vender'}</Text>
-                        </Layout>
-
-                        <Layout>
-                            {/*<Icon*/}
-                            {/*    style={{width: 32,*/}
-                            {/*        height: 32,}}*/}
-                            {/*    fill='#8F9BB3'*/}
-                            {/*    name='minus-circle-outline'*/}
-                            {/*    onPress={() => setNumberOfCoins(numberOfCoins-1)}*/}
-                            {/*/>*/}
-                            <Input
-                                placeholder='Place your Text'
-                                value={numberOfCoins.toString()}
-                                onChangeText={nextValue => setNumberOfCoins(nextValue)}
-                                keyboardType={'numeric'}
-                            />
-                            {/*<Text>{numberOfCoins}</Text>*/}
-                            {/*<Icon*/}
-                            {/*    style={{width: 32,*/}
-                            {/*        height: 32,}}*/}
-                            {/*    fill='#8F9BB3'*/}
-                            {/*    name='plus-circle-outline'*/}
-                            {/*    onPress={() => setNumberOfCoins(numberOfCoins+1)}*/}
-                            {/*/>*/}
-                        </Layout>
-
-
-
-
-                        <Layout style={{flex: 1, justifyContent: 'flex-end'}}>
-                            <Button
-                                onPress={() => setOpenModal(false)}
-                                status='danger'
-                            >
-                                CANCEL
-                            </Button>
-
-                            <Button
-                                onPress={() => operationType === 'buy' ? buyCoins() : sellCoins()}
-                            >
-                                {operationType === 'buy' ? 'PAY' : 'SELL'}
-                            </Button>
-                        </Layout>
+        <Layout style={styles.container}>
+            {
+                (loading || movementsConsult)
+                    ? <Layout style={[styles.center, styles.container]}>
+                        <Spinner/>
                     </Layout>
-                </Modal>
-            </Layout>
+                    : <>
+                        <Layout style={styles.infoContainer}>
+                            <Image
+                                style={{width: 60, height: 60}}
+                                source={item.image}
+                            />
+
+                            <Text style={{color: Constant.colors.whiteColor, fontSize: 22}}>{numberOfCoinsToSell}   {item.item.name}</Text>
+
+                            <Layout style={styles.containerButtonsAction}>
+                                <TouchableOpacity
+                                    style={{alignItems: 'center'}}
+                                    onPress={() => {
+                                        setOperationType('buy');
+                                        setOpenModal(true);
+                                    }}
+                                >
+
+                                    <Layout style={styles.roundedIcon}>
+                                        <MaterialCommunityIcons
+                                            name="credit-card-refund-outline"
+                                            size={30}
+                                            color={Constant.colors.blueColor}
+                                        />
+                                    </Layout>
+                                    <Text style={{color: Constant.colors.whiteColor}}>BUY</Text>
+
+                                </TouchableOpacity>
+
+
+
+                                <TouchableOpacity
+                                    style={{alignItems: 'center'}}
+                                    onPress={() => validateSell()}
+                                >
+                                    <Layout style={styles.roundedIcon}>
+                                        <MaterialCommunityIcons
+                                            name="cash-multiple"
+                                            size={30}
+                                            color={Constant.colors.blueColor}
+                                            // onPress={() => logout()}
+                                        />
+                                    </Layout>
+                                    <Text style={{color: Constant.colors.whiteColor}}>SELL</Text>
+
+                                </TouchableOpacity>
+
+
+                            </Layout>
+
+                        </Layout>
+                        <ScrollView>
+                            <FlatList
+                                data={listMovements}
+                                renderItem={renderItem}
+                                ListEmptyComponent={renderEmptyList}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
+
+                            <Modal
+                                visible={openModal}
+                                backdropStyle={styles.backdrop}
+                                onBackdropPress={() => setOpenModal(false)}
+                            >
+                                <Layout style={{height: 400, width: 300, justifyContent: 'space-between'}}>
+                                    <Layout style={{height: 130, alignItems: 'center', justifyContent: 'center'}}>
+                                        <Text style={{fontWeight: 'bold', fontSize: 24}}>{operationType === 'buy' ? 'BUY' : 'SELL'}</Text>
+                                    </Layout>
+
+                                    <Layout style={{height: 130}}>
+                                        <Input
+                                            placeholder='Place your Text'
+                                            textAlign={'right'}
+                                            value={numberOfCoins.toString()}
+                                            onChangeText={nextValue => setNumberOfCoins(nextValue)}
+                                            keyboardType={'numeric'}
+                                        />
+                                    </Layout>
+
+
+                                    <Layout style={{height: 130, justifyContent: 'flex-end'}}>
+                                        <Button
+                                            onPress={() => setOpenModal(false)}
+                                            status='danger'
+                                        >
+                                            CANCEL
+                                        </Button>
+
+                                        <Button
+                                            // onPress={() => operationType === 'buy' ? buyCoins() : sellCoins()}
+                                            onPress={() => modalConfirm()}
+                                        >
+                                            {operationType === 'buy' ? 'PAY' : 'SELL'}
+                                        </Button>
+                                    </Layout>
+                                </Layout>
+                            </Modal>
+                        </ScrollView>
+                    </>
+            }
+
         </Layout>
     )
 };
@@ -414,4 +421,53 @@ const styles = StyleSheet.create({
     backdrop: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    infoContainer: {
+        height: 200,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 10,
+        backgroundColor: Constant.colors.blueColor,
+        paddingVertical: 10
+    },
+    container: {
+        flex: 1,
+        alignSelf: 'stretch',
+    },
+    containerButtonsAction: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent:'space-around',
+        alignSelf: 'stretch',
+        backgroundColor: Constant.colors.blueColor
+    },
+    roundedIcon: {
+        height: 60,
+        width: 60,
+        borderRadius: 50,
+        backgroundColor: Constant.colors.whiteColor,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    center: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    listEmpty: {
+        paddingTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        paddingHorizontal: 10
+    },
+    card: {
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        margin: 10
+    },
+    propertyOfCard: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }
+
 });

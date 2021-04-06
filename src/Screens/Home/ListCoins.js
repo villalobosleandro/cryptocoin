@@ -120,22 +120,22 @@ export const ListCoins = (props) => {
 
             case 'XEM':
                 name = 'NEM';
-                img = Constant.image.default;
+                img = Constant.image.nem;
                 break;
 
             case 'XLM':
                 name = 'Stellar';
-                img = Constant.image.default;
+                img = Constant.image.stellar;
                 break;
 
             case 'EOS':
                 name = 'EOS';
-                img = Constant.image.default;
+                img = Constant.image.eos;
                 break;
 
             case 'NEO':
                 name = 'NEO';
-                img = Constant.image.default;
+                img = Constant.image.neo;
                 break;
 
             default:
@@ -143,14 +143,16 @@ export const ListCoins = (props) => {
                 img = 'https://images.unsplash.com/photo-1519995451813-39e29e054914?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDJ8fGJpdGNvaW4lMjBpY29ufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60';
                 break;
         }
-
-
         return (
             <TouchableOpacity
                 onPress={() => {
                     // setItemSelected(item);
                     // setOpenModal(true);
-                    navigation.navigate('Details', {item: item, userLogged: userLogged});
+                    navigation.navigate('DETAILS', {
+                        item: item,
+                        userLogged: userLogged,
+                        image: img
+                    });
 
                 }}
             >
@@ -166,7 +168,7 @@ export const ListCoins = (props) => {
                     <Layout style={{flex: 1}}>
                         <Image
                             source={img}
-                            style={{width: 25, height: 25}}
+                            style={{width: 40, height: 40, borderRadius: 20}}
                             // resizeMode={'contain'}
                         />
                     </Layout>

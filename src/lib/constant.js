@@ -6,7 +6,15 @@ module.exports = {
 
   colors: {
     blueColor: '#038bfd',
-    whiteColor: '#ffffff'
+    whiteColor: '#ffffff',
+    purpleColor: '#9D81EB',
+    pinkColor: '#FB79B4',
+    lightYellowColor: '#FFDC00',
+    darkYellowColor: '#FFA300',
+    turquoiseColor: '#02DFB6' ,
+    appleGreenColor: '#47E543',
+    lightblueColor: '#58C4D8',
+    darkBlueColor: '#65A1E0'
   },
 
   image: {
@@ -16,7 +24,12 @@ module.exports = {
     bitcoinCash: require('./../assets/img/bitcoincash.png'),
     cardano: require('./../assets/img/cardano.png'),
     litecoin: require('./../assets/img/litecoin.png'),
+    nem: require('./../assets/img/nem.png'),
+    stellar: require('./../assets/img/stellar.png'),
+    eos: require('./../assets/img/eos.png'),
+    neo: require('./../assets/img/neo.png'),
     default: require('./../assets/img/default.jpg'),
+    listEmpty: require('./../assets/img/listEmpty.png')
   },
 
   coins: [

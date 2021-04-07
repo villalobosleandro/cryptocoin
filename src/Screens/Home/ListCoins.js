@@ -1,91 +1,41 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Image, Dimensions, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import React from 'react';
+import {Image, TouchableOpacity, StyleSheet } from 'react-native';
 import {
     List,
-    ListItem,
     Layout,
     Text,
-    Button,
-    Modal,
-    Input, Icon,
 } from '@ui-kitten/components';
-import {
-    LineChart,
-    BarChart,
-    PieChart,
-    ProgressChart,
-    ContributionGraph,
-    StackedBarChart
-} from "react-native-chart-kit";
+
 
 export const ListCoins = (props) => {
 
-    const { data, userLogged, getInfoUser, navigation } = props;
+    const { data, userLogged, navigation } = props;
 
     const renderItem = ({ item, index }) => {
 
         let name = '';
         let img = '';
+        let typeTransaction = '';
 
-        const chartConfig = {
-            backgroundGradientFrom: "#b41d35",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "rgba(28,0,14,0.97)",
-            backgroundGradientToOpacity: 0.5,
-            color: (opacity = 1) => `rgba(75, 181, 67, ${opacity})`,//este es el color del chart
-            // strokeWidth: 2, // optional, default 3
-            barPercentage: 0.5,
-            // useShadowColorFromDataset: false // optional
-        };
+        let high = item.high24hour;
+        high = high.replace('$ ', '');
+        high = high.replace(',', '.');
+        high = (parseFloat(high)).toFixed(2);
 
-        let l = item.openDay;
-        l = l.replace('$ ', '');
-        l = l.replace(',', '.');
-        l = parseFloat(l);
+        let low = item.low24hour;
+        low = low.replace('$ ', '');
+        low = low.replace(',', '.');
+        low = (parseFloat(low)).toFixed(2);
 
-        let m = item.highDay;
-        m = m.replace('$ ', '');
-        m = m.replace(',', '.');
-        m = parseFloat(m);
+        let diff = (((high - low) / low) * 100).toFixed(2);
 
-
-        let n = item.lowDay;
-        n = n.replace('$ ', '');
-        n = n.replace(',', '.');
-        n = parseFloat(n);
-
-        let o = item.open24hour;
-        o = o.replace('$ ', '');
-        o = o.replace(',', '.');
-        o = parseFloat(o);
-
-        let p = item.high24hour;
-        p = p.replace('$ ', '');
-        p = p.replace(',', '.');
-        p = parseFloat(p);
-
-        let q = item.low24hour;
-        q = q.replace('$ ', '');
-        q = q.replace(',', '.');
-        q = parseFloat(q);
-
-        const data = {
-            datasets: [
-                {
-                    data: [l,m,n, o,  p, q],
-                    // data: [
-                    //     item.openDay,
-                    //     item.highDay,
-                    //     item.lowDay,
-                    //     item.open24hour,
-                    //     item.high24hour,
-                    //     item.low24hour]
-                    // color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-                    // strokeWidth: 2 // optional
-                }
-            ],
-            // legend: ["Rainy Days"] // optional
-        };
+        if(diff > high) {
+            //aumento
+            typeTransaction = 'aumento';
+        }else {
+            //reduccion
+            typeTransaction = 'reduccion';
+        }
 
         switch (item.name) {
             case 'BTC':
@@ -143,11 +93,10 @@ export const ListCoins = (props) => {
                 img = 'https://images.unsplash.com/photo-1519995451813-39e29e054914?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDJ8fGJpdGNvaW4lMjBpY29ufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60';
                 break;
         }
+
         return (
             <TouchableOpacity
                 onPress={() => {
-                    // setItemSelected(item);
-                    // setOpenModal(true);
                     navigation.navigate('DETAILS', {
                         item: item,
                         userLogged: userLogged,
@@ -156,45 +105,25 @@ export const ListCoins = (props) => {
 
                 }}
             >
-                <Layout style={{
-                    flexDirection: 'row',
-                    alignSelf: 'stretch',
-                    height: 70,
-                    alignItems: 'center',
-                    paddingHorizontal: 10,
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#616161',
-                }}>
-                    <Layout style={{flex: 1}}>
+                <Layout style={styles.renderItemContainer}>
+                    <Layout style={styles.column1}>
                         <Image
                             source={img}
                             style={{width: 40, height: 40, borderRadius: 20}}
-                            // resizeMode={'contain'}
                         />
                     </Layout>
 
-                    <Layout style={{flex: 1}}>
+                    <Layout style={styles.column1}>
                         <Text>{name}</Text>
                         <Text>{item.name}</Text>
                     </Layout>
 
-                    <Layout style={{flex: 2}}>
-                        <LineChart
-                            data={data}
-                            width={150}
-                            height={50}
-                            chartConfig={chartConfig}
-                            withHorizontalLabels={false}
-                            withVerticalLabels={false}
-                            withHorizontalLines={false}
-                            withVerticalLines={false}
-                            withDots={false}
-                        />
+                    <Layout style={styles.column1}>
+                        <Text status={typeTransaction === 'aumento' ? 'success' : 'danger'}>{`%${diff}`}</Text>
                     </Layout>
 
-                    <Layout style={{flex: 1}}>
+                    <Layout style={styles.column1}>
                         <Text>{item.price}</Text>
-                        {/*<Text>{formatter(1100124,20)}</Text>*/}
                     </Layout>
 
 
@@ -204,7 +133,7 @@ export const ListCoins = (props) => {
     };
 
     return(
-        <Layout style={{flex: 2, backgroundColor: '#151515', alignSelf: 'stretch'}}>
+        <Layout style={styles.container}>
             <List
                 data={data}
                 renderItem={renderItem}
@@ -213,6 +142,26 @@ export const ListCoins = (props) => {
 
     )
 };
+
+const styles = StyleSheet.create({
+   container: {
+       flex: 2,
+       backgroundColor: '#151515',
+       alignSelf: 'stretch'
+   },
+    renderItemContainer: {
+        flexDirection: 'row',
+        alignSelf: 'stretch',
+        height: 70,
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#616161',
+    },
+    column1: {
+       flex: 1
+    }
+});
 
 
 

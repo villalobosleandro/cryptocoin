@@ -1,6 +1,6 @@
 module.exports = {
   titleApp: 'CryptoApp',
-
+  url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,XRP,BCH,ADA,LTC,XEM,XLM,EOS,NEO&tsyms=USD',
   minAmount: 100,
   maxAmount: 100000,
 

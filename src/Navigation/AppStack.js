@@ -3,8 +3,6 @@ import {View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
 
 import {HomeScreen} from './../Screens/Home';
 import {History} from './../Screens/History';
@@ -15,7 +13,6 @@ import {AuthContext} from './AuthProvider';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
 
 
 const HomeStack = ({navigation}) => {

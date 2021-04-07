@@ -10,7 +10,6 @@ import {
 import {
     Button,
     Layout,
-    ListItem,
     Modal,
     Text,
     Input,
@@ -21,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import Toast from 'react-native-simple-toast';
 
 import {AuthContext} from '../../Navigation/AuthProvider';
 
@@ -53,16 +52,16 @@ export const DetailsScreen = props => {
                 .get();
 
             setAllDataUser(details._docs[0]);
-            // console.log('\x1b[1;34m', 'LOG: details._docs[0]', details._docs[0]);
-
             let aux = details._docs[0]._data.coins
                 ? details._docs[0]._data.coins.find(element => element.symbol === item.item.name)
-                :[];
-            setNumberOfCoinsToSell(aux ? aux.amount : 0);
+                : [];
+
+            setNumberOfCoinsToSell(aux !== undefined ? aux.amount : 0);
             setUserHasCoinToSell(details._docs);
             setLoading(false);
 
         } catch (e) {
+            Toast.show(`Error ${e}`, Toast.LONG);
             console.log('e history => ', e);
             setLoading(false);
         }
@@ -77,6 +76,7 @@ export const DetailsScreen = props => {
             setListMovements(movements._docs);
             setMovementsConsult(false);
         } catch (e) {
+            Toast.show(`Error ${e}`, Toast.LONG);
             console.log('e history => ', e);
         }
 
@@ -92,7 +92,7 @@ export const DetailsScreen = props => {
         price = parseFloat(price);
 
         if(item.userLogged.totalAmount < numberOfCoins * price) {
-            Alert.alert('No Teienes dinero')
+            Alert.alert('Error!!!', 'You don\'t have enough money to make this purchase')
         }else {
 
             let aux = {
@@ -146,10 +146,12 @@ export const DetailsScreen = props => {
                         getInfoMovements();
                     })
                     .catch(error => {
+                        Toast.show(`Error ${error}`, Toast.LONG);
                         console.log('error', error);
                     });
 
             }catch (e) {
+                Toast.show(`Error ${e}`, Toast.LONG);
                 console.log('\x1b[1;34m', 'LOG: e', e);
             }
 
@@ -164,7 +166,7 @@ export const DetailsScreen = props => {
         const coin = userHasCoinToSell[0]._data.coins.find(element => element.symbol === item.item.name);
 
         if(coin.amount < numberOfCoins) {
-            Alert.alert('Error', 'No no tienes la cantidad que quieres vender');
+            Alert.alert('Error!!!', 'You don\'t have the amount you want to sell');
         }else {
             let arrayTemp =[];
 
@@ -231,11 +233,13 @@ export const DetailsScreen = props => {
                         getInfoMovements();
                     })
                     .catch(error => {
+                        Toast.show(`Error ${error}`, Toast.LONG);
                         // console.log('error', error);
 
                     });
 
             }catch (e) {
+                Toast.show(`Error ${e}`, Toast.LONG);
                 console.log('\x1b[1;34m', 'LOG: e', e);
             }
         }
@@ -376,8 +380,8 @@ export const DetailsScreen = props => {
                                 backdropStyle={styles.backdrop}
                                 onBackdropPress={() => setOpenModal(false)}
                             >
-                                <Layout style={{height: 400, width: 300, justifyContent: 'space-between'}}>
-                                    <Layout style={{height: 130, alignItems: 'center', justifyContent: 'center'}}>
+                                <Layout style={styles.containerModal}>
+                                    <Layout style={styles.title}>
                                         <Text style={{fontWeight: 'bold', fontSize: 24}}>{operationType === 'buy' ? 'BUY' : 'SELL'}</Text>
                                     </Layout>
 
@@ -392,7 +396,7 @@ export const DetailsScreen = props => {
                                     </Layout>
 
 
-                                    <Layout style={{height: 130, justifyContent: 'flex-end'}}>
+                                    <Layout style={styles.buttonsContainer}>
                                         <Button
                                             onPress={() => setOpenModal(false)}
                                             status='danger'
@@ -468,6 +472,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row'
+    },
+    containerModal: {
+        height: 400,
+        width: 300,
+        justifyContent: 'space-between'
+    },
+    title: {
+        height: 130,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    buttonsContainer: {
+        height: 130,
+        justifyContent: 'flex-end'
     }
 
 });

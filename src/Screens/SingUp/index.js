@@ -11,7 +11,7 @@ import {
     Spinner,
     Layout
 } from '@ui-kitten/components';
-import { Toast } from 'native-base';
+import { sha512 } from 'react-native-sha512';
 
 import { ImageOverlay } from './../../Shared/image-overlay.component';
 import { EmailIcon, PersonIcon, PlusIcon } from './../../Shared/icons';
@@ -20,11 +20,10 @@ import {AuthContext} from '../../Navigation/AuthProvider';
 
 export const SingUp = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
-    const [firstName, setFirstName] = useState('firstname1');
-    const [lastName, setLastName] = useState('lastname1');
-    const [email, setEmail] = useState('mail1@mail.com');
-    const [password, setPassword] = useState('asd123');
-    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const image = { uri: "https://images.unsplash.com/photo-1612197527762-8cfb55b618d1?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJpdGNvaW5zfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60" };
     const { register } = useContext(AuthContext);
@@ -33,31 +32,22 @@ export const SingUp = ({ navigation }) => {
 
     const onSignUpButtonPress = async () => {
         setLoading(true);
+        const pass = await sha512(password);
         const data = {
             email,
             firstName,
             lastName,
-            password
+            password: pass
         };
 
         const response = await register(data);
         if(response === undefined) {
             setLoading(false);
 
-
-            // Toast.show({
-            //     topOffset: 60,
-            //     type: "success",
-            //     text1: "New Category added",
-            //     text2: ""
-            // });
         }else {
-            Alert.alert('El usuario ya existe');
+            Alert.alert('Error!!!', 'There is already an account with the email provided');
             setLoading(false);
         }
-        // console.log('\x1b[1;34m', 'LOG: aaaaaaaaaa', response);
-
-        // navigation && navigation.goBack();
     };
 
     const onSignInButtonPress = () => {
@@ -67,14 +57,6 @@ export const SingUp = ({ navigation }) => {
     const onPasswordIconPress = () => {
         setPasswordVisible(!passwordVisible);
     };
-
-    const renderEditAvatarButton = () => (
-        <Button
-            style={styles.editAvatarButton}
-            status='basic'
-            accessoryRight={PlusIcon}
-        />
-    );
 
     const renderPasswordIcon = (props) => (
         <TouchableWithoutFeedback onPress={onPasswordIconPress}>

@@ -11,9 +11,10 @@ import {
 } from './../../Shared/icons';
 import { KeyboardAvoidingView } from './../../Shared/3rd-party';
 import {AuthContext} from '../../Navigation/AuthProvider';
+import {sha512} from 'react-native-sha512';
 
 export const LoginScreen = ({ navigation }) => {
-
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -21,26 +22,18 @@ export const LoginScreen = ({ navigation }) => {
     const {login} = useContext(AuthContext);
 
     const onSignInButtonPress = async () => {
-        const response = await login(email, password);
-
+        setLoading(true);
+        const pass = await sha512(password);
+        const response = await login(email, pass);
 
         if(response !== undefined) {
-            console.log('\x1b[1;34m', 'LOG: response', response);
-            Toast.show({
-                topOffset: 60,
-                type: "error",
-                text1: "Error!",
-                text2: `${response}`
-            });
+            setLoading(false);
+            Toast.show(`Error ${response}`, Toast.LONG);
         }
     };
 
     const onSignUpButtonPress = () => {
         navigation && navigation.navigate('Signup');
-    };
-
-    const onForgotPasswordButtonPress = () => {
-        navigation && navigation.navigate('ForgotPassword');
     };
 
     const onPasswordIconPress = () => {
@@ -89,15 +82,7 @@ export const LoginScreen = ({ navigation }) => {
                         secureTextEntry={!passwordVisible}
                         onChangeText={setPassword}
                     />
-                    {/*<View style={styles.forgotPasswordContainer}>*/}
-                    {/*    <Button*/}
-                    {/*        style={styles.forgotPasswordButton}*/}
-                    {/*        appearance='ghost'*/}
-                    {/*        status='control'*/}
-                    {/*        onPress={onForgotPasswordButtonPress}>*/}
-                    {/*        Forgot your password?*/}
-                    {/*    </Button>*/}
-                    {/*</View>*/}
+
                 </View>
                 <Button
                     style={styles.signInButton}
@@ -105,27 +90,7 @@ export const LoginScreen = ({ navigation }) => {
                     onPress={onSignInButtonPress}>
                     SIGN IN
                 </Button>
-                <View style={styles.socialAuthContainer}>
-                    <Text
-                        style={styles.socialAuthHintText}
-                        status='control'>
-                        Or Sign In using Social Media
-                    </Text>
-                    <View style={styles.socialAuthButtonsContainer}>
-                        <Button
-                            appearance='ghost'
-                            status='control'
-                            size='giant'
-                            accessoryLeft={GoogleIcon}
-                        />
-                        <Button
-                            appearance='ghost'
-                            status='control'
-                            size='giant'
-                            accessoryLeft={FacebookIcon}
-                        />
-                    </View>
-                </View>
+
                 <Button
                     style={styles.signUpButton}
                     appearance='ghost'

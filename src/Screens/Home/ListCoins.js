@@ -88,9 +88,59 @@ export const ListCoins = (props) => {
                 img = Constant.image.neo;
                 break;
 
+            case 'MIOTA':
+                name = 'IOTA';
+                img = Constant.image.iota;
+                break;
+
+            case 'DASH':
+                name = 'DASH';
+                img = Constant.image.dash;
+                break;
+
+            case 'XMR':
+                name = 'MONERO';
+                img = Constant.image.monero;
+                break;
+
+            case 'TRX':
+                name = 'TRON';
+                img = Constant.image.tron;
+                break;
+
+            case 'XTZ':
+                name = 'TEZOS';
+                img = Constant.image.tezos;
+                break;
+
+            case 'DOGE':
+                name = 'DOGECOIN';
+                img = Constant.image.dogecoin;
+                break;
+
+            case 'ETC':
+                name = 'ETHERUM CLASSIC';
+                img = Constant.image.etherumClassic;
+                break;
+
+            case 'VEN':
+                name = 'VECHAIN';
+                img = Constant.image.vechain;
+                break;
+
+            case 'USDT':
+                name = 'TETHER';
+                img = Constant.image.tether;
+                break;
+
+            case 'BNB':
+                name = 'BINANCE COIN';
+                img = Constant.image.binanceCoin;
+                break;
+
             default:
                 name = item.name;
-                img = 'https://images.unsplash.com/photo-1519995451813-39e29e054914?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDJ8fGJpdGNvaW4lMjBpY29ufGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60';
+                img = Constant.image.default;
                 break;
         }
 

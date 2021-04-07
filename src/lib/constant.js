@@ -1,6 +1,6 @@
 module.exports = {
   titleApp: 'CryptoApp',
-  url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,XRP,BCH,ADA,LTC,XEM,XLM,EOS,NEO&tsyms=USD',
+  url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,XRP,BCH,ADA,LTC,XEM,XLM,EOS,NEO,MIOTA,DASH,XMR,TRX,XTZ,DOGE,ETC,VEN,USDT,BNB&tsyms=USD',
   minAmount: 100,
   maxAmount: 100000,
 
@@ -28,6 +28,19 @@ module.exports = {
     stellar: require('./../assets/img/stellar.png'),
     eos: require('./../assets/img/eos.png'),
     neo: require('./../assets/img/neo.png'),
+
+    binanceCoin: require('./../assets/img/binanceCoin.png'),
+    dash: require('./../assets/img/dash.png'),
+    dogecoin: require('./../assets/img/dogecoin.png'),
+    etherumClassic: require('./../assets/img/etherumClassic.png'),
+    iota: require('./../assets/img/iota.png'),
+    monero: require('./../assets/img/monero.png'),
+    tether: require('./../assets/img/tether.png'),
+    tezos: require('./../assets/img/tezos.png'),
+    tron: require('./../assets/img/tron.png'),
+    vechain: require('./../assets/img/vechain.png'),
+
+
     default: require('./../assets/img/default.jpg'),
     listEmpty: require('./../assets/img/listEmpty.png')
   },

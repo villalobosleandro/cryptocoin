@@ -4,13 +4,11 @@ import { Button, Spinner, Layout } from '@ui-kitten/components';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-simple-toast';
 
 import {AuthContext} from '../../Navigation/AuthProvider';
 import {PieChart} from './PieChart';
-import {MyCoins} from './MyCoins';
 import {ListCoins} from './ListCoins';
-
-
 
 export const HomeScreen = (props) => {
 
@@ -60,6 +58,7 @@ export const HomeScreen = (props) => {
             .catch(error => {
                 setFetchConsultError(true);
                 setCoinsConsult(false);
+                Toast.show(`Error ${error}`, Toast.LONG);
                 console.log('error, ', error);
             })
 
@@ -75,6 +74,7 @@ export const HomeScreen = (props) => {
             setUserLogged(userDetails._data);
             setUserConsult(false);
         }catch (e) {
+            Toast.show(`Error ${e}`, Toast.LONG);
             console.log('e home => ', e)
         }
 

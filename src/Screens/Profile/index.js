@@ -4,9 +4,8 @@ import {Layout, Spinner, Text, Avatar, List } from '@ui-kitten/components';
 import { useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import 'intl';
+import Toast from 'react-native-simple-toast';
 
-import {AuthContext} from '../../Navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
@@ -37,7 +36,7 @@ export const Profile = props => {
 
     useFocusEffect(
         useCallback(() => {
-            getInfoCoins()
+            getInfoCoins();
             getInfoUser();
         }, [])
     );
@@ -49,15 +48,11 @@ export const Profile = props => {
             .then(data => {
 
                 let arr = [];
-
                 for (let clave in data.DISPLAY) {
-                    // console.log('\x1b[1;34m', 'LOG: data.DISPLAY[clave].USD.PRICE', data.DISPLAY[clave].USD.PRICE);
-
                     let price = data.DISPLAY[clave].USD.PRICE;
                     price = price.replace('$ ', '');//le quito el simbolo y espacio en blanco
                     price = price.replace(',', '');//le quito el punto
                     price = parseFloat(price).toFixed(2);
-
 
                     let aux = {
                         name: clave,
@@ -74,6 +69,7 @@ export const Profile = props => {
             .catch(error => {
                 setFetchConsultError(true);
                 setCoinsConsult(false);
+                Toast.show(`Error ${error}`, Toast.LONG);
                 console.log('error, ', error);
             })
 
@@ -89,12 +85,19 @@ export const Profile = props => {
             setUserLogged(userDetails._data);
             setUserConsult(false);
         }catch (e) {
+            Toast.show(`Error ${e}`, Toast.LONG);
             console.log('e home => ', e)
         }
     };
 
     const renderItem = ({ item, index }) => {
-        let price = listCoins.find(element => element.name === item.symbol);
+        let price = {};
+        if(listCoins.length > 0) {
+            for(let x = 0; x< listCoins.length; x++) {
+                if(listCoins[x].name === item.symbol)
+                price = listCoins[x];
+            }
+        }
         let img = '';
         switch (item.symbol) {
             case 'BTC':
@@ -135,6 +138,46 @@ export const Profile = props => {
 
             case 'NEO':
                 img = Constant.image.neo;
+                break;
+
+            case 'MIOTA':
+                img = Constant.image.iota;
+                break;
+
+            case 'DASH':
+                img = Constant.image.dash;
+                break;
+
+            case 'XMR':
+                img = Constant.image.monero;
+                break;
+
+            case 'TRX':
+                img = Constant.image.tron;
+                break;
+
+            case 'XTZ':
+                img = Constant.image.tezos;
+                break;
+
+            case 'DOGE':
+                img = Constant.image.dogecoin;
+                break;
+
+            case 'ETC':
+                img = Constant.image.etherumClassic;
+                break;
+
+            case 'VEN':
+                img = Constant.image.vechain;
+                break;
+
+            case 'USDT':
+                img = Constant.image.tether;
+                break;
+
+            case 'BNB':
+                img = Constant.image.binanceCoin;
                 break;
 
             default:
@@ -186,7 +229,7 @@ export const Profile = props => {
                         <Layout style={styles.container}>
                             <MaterialCommunityIcons
                                 name="shield-account"
-                                size={80}
+                                size={70}
                                 color={Constant.colors.whiteColor}
                             />
                             <Layout style={styles.nameUserContainer}>

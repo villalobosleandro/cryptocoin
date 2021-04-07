@@ -1,6 +1,7 @@
 module.exports = {
   titleApp: 'CryptoApp',
   url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,XRP,BCH,ADA,LTC,XEM,XLM,EOS,NEO,MIOTA,DASH,XMR,TRX,XTZ,DOGE,ETC,VEN,USDT,BNB&tsyms=USD',
+  api_neat: 'https://us-central1-neatwebplatform-beta.cloudfunctions.net/cryptoExchange',
   minAmount: 100,
   maxAmount: 100000,
 
@@ -56,5 +57,16 @@ module.exports = {
     {name: 'Stellar', symbol: 'XLM'},
     {name: 'EOS', symbol: 'EOS'},
     {name: 'NEO', symbol: 'NEO'},
+
+    {name: 'IOTA', symbol: 'MIOTA'},
+    {name: 'DASH', symbol: 'DASH'},
+    {name: 'MONERO', symbol: 'XMR'},
+    {name: 'TRON', symbol: 'TRX'},
+    {name: 'TEZOS', symbol: 'XTZ'},
+    {name: 'DOGECOIN', symbol: 'DOGE'},
+    {name: 'ETHERUM CLASSIC', symbol: 'ETC'},
+    {name: 'VECHAIN', symbol: 'VEN'},
+    {name: 'TETHER', symbol: 'USDT'},
+    {name: 'INANCE COIN', symbol: 'BNB'},
   ]
 };

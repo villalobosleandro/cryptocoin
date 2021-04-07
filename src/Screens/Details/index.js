@@ -142,8 +142,54 @@ export const DetailsScreen = props => {
                             oldBalance: item.userLogged.totalAmount,
                             newBalance: item.userLogged.totalAmount - (numberOfCoins * price)
                         });
+
+                        // con esto no funciona :(
+                        const info = {
+                            "fsym": item.item.name,
+                            "fsymAmount": numberOfCoins,
+                            "fsymPrice": price,
+                            "tsyms": "USD",
+                            "tsymsAmount": null,
+                            "transactionType": operationType.toUpperCase()
+                        };
+
+                        // este es el ejemplo y si funciona
+                        // const info2 = {
+                        //     "fsym": "BTC",
+                        //     "fsymAmount": 1.5,
+                        //     "fsymPrice": 50,
+                        //     "tsyms": "USD",
+                        //     "tsymsAmount": null,
+                        //     "transactionType": "SELL"
+                        // };
+
+
+                        fetch(Constant.api_neat, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                                "api_key": "villalobosleandro1@gmail.com"
+                            },
+                            body: JSON.stringify(info)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+
+
+                                console.log('\x1b[1;34m', 'LOG: data', data);
+
+                            })
+                            .catch(error => {
+
+                                Toast.show(`Error api neat ${error}`, Toast.LONG);
+                                console.log('\x1b[1;34m', 'LOG: error api neat ', error);
+
+                            });
+
                         getDetailCoins();
                         getInfoMovements();
+
+
                     })
                     .catch(error => {
                         Toast.show(`Error ${error}`, Toast.LONG);
@@ -229,6 +275,51 @@ export const DetailsScreen = props => {
                             oldBalance: item.userLogged.totalAmount,
                             newBalance: allDataUser._data.totalAmount + (numberOfCoins * price)
                         });
+
+                        // con esto no funciona :(
+                        const info = {
+                            "fsym": item.item.name,
+                            "fsymAmount": numberOfCoins,
+                            "fsymPrice": price,
+                            "tsyms": "USD",
+                            "transactionType": operationType.toUpperCase()
+                        };
+
+                        // este es el ejemplo y si funciona
+                        // const info2 = {
+                        //     "fsym": "BTC",
+                        //     "fsymAmount": 1.5,
+                        //     "fsymPrice": 50,
+                        //     "tsyms": "USD",
+                        //     "tsymsAmount": null,
+                        //     "transactionType": "SELL"
+                        // };
+
+                        console.log('\x1b[1;34m', 'LOG: info', info);
+
+
+
+                        fetch(Constant.api_neat, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                                "api_key": "villalobosleandro1@gmail.com"
+                            },
+                            body: JSON.stringify(info)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+
+
+                                console.log('\x1b[1;34m', 'LOG: data', data);
+
+                            })
+                            .catch(error => {
+
+                                Toast.show(`Error api neat ${error}`, Toast.LONG);
+                                console.log('\x1b[1;34m', 'LOG: error api neat ', error);
+
+                            });
                         getDetailCoins();
                         getInfoMovements();
                     })
@@ -267,8 +358,9 @@ export const DetailsScreen = props => {
                 </Layout>
 
                 <Layout style={styles.propertyOfCard}>
+
                     <Text>Date:</Text>
-                    <Text>{moment(item._data.date).format('DD-MM-YYYY h:mm')}</Text>
+                    <Text>{item._data.date}</Text>
                 </Layout>
             </Card>
         );

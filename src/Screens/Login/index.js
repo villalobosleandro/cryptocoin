@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Button, Input, Text, Icon } from '@ui-kitten/components';
 import Toast from 'react-native-toast-message';
 
@@ -15,8 +15,8 @@ import {sha512} from 'react-native-sha512';
 
 export const LoginScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const image = { uri: "https://images.unsplash.com/photo-1612197527762-8cfb55b618d1?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJpdGNvaW5zfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60" };
     const {login} = useContext(AuthContext);
@@ -45,6 +45,26 @@ export const LoginScreen = ({ navigation }) => {
             <Icon {...props} name={passwordVisible ? 'eye-off' : 'eye'} />
         </TouchableWithoutFeedback>
     );
+
+    const validateEmail = (text) => {
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(text);
+    };
+
+    const checkTextInputIsEmptyOrNot = () => {
+        console.log('\x1b[1;34m', 'LOG: ', password, email);
+
+        if (password === '' || email === '') {
+            Alert.alert('Error!', 'Please fill in all the fields')
+        }
+        else {
+            if (!validateEmail(email)) {
+                Alert.alert('Error!!!', 'Invalid Email')
+            } else {
+                onSignInButtonPress();
+            }
+        }
+    };
 
     return (
         <KeyboardAvoidingView>
@@ -87,7 +107,7 @@ export const LoginScreen = ({ navigation }) => {
                 <Button
                     style={styles.signInButton}
                     size='giant'
-                    onPress={onSignInButtonPress}>
+                    onPress={checkTextInputIsEmptyOrNot}>
                     SIGN IN
                 </Button>
 
